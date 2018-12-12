@@ -30,7 +30,33 @@ struct Ball
     
     // lets "update" the ball: move its shape
     // by the current velocity
-    void update() { shape.move(velocity); }
+    void update()
+    {
+        shape.move(velocity);
+        
+        // we need to keep the ball "inside the screen"
+        
+        // if it's leaving toward the left, we need to set
+        // horizontal velocity to a positive value (towards the right)
+        if (left() < 0) velocity.x = ballVelocity;
+        
+        // otherwise, if its leaving towards the right, we need to
+        // set horizontal velocity to a negative value (towards the left)
+        else if (right() > windowWidth) velocity.x = -ballVelocity;
+        
+        // the same idea can be applied for top/botto collisions
+        if (top() < 0) velocity.y = ballVelocity;
+        else if (bottom() > windowHeight) velocity.y = -ballVelocity;
+    }
+    
+    // we can create "property" methods to easily
+    // get commonly used values
+    float x()       { return shape.getPosition().x; }
+    float y()       { return shape.getPosition().y; }
+    float left()    { return x() - shape.getRadius(); }
+    float right()   { return x() + shape.getRadius(); }
+    float top()     { return y() - shape.getRadius(); }
+    float bottom()  { return y() + shape.getRadius(); }
 };
 
 int main() {
