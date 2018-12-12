@@ -6,11 +6,16 @@ using namespace sf;
 
 // constexpr defines an immutable compile time value
 constexpr int windowWidth(800), windowHeight(600);
-constexpr float ballRadius{10.f};
+
+// constamts for the Ball class
+constexpr float ballRadius{10.f}, ballVelocity{8.f};
 
 struct Ball
 {
     CircleShape shape;
+    
+    // 2D vector that stores Ball's velocity
+    Vector2f velocity{-ballVelocity, -ballVelocity};
     
     // Ball constructor
     // argument mX -> starting x coord
@@ -22,6 +27,10 @@ struct Ball
         shape.setFillColor(Color::Red);
         shape.setOrigin(ballRadius, ballRadius);
     }
+    
+    // lets "update" the ball: move its shape
+    // by the current velocity
+    void update() { shape.move(velocity); }
 };
 
 int main() {
@@ -42,6 +51,9 @@ int main() {
         // if 'escape' is pressed, break out of the loop
         if(Keyboard::isKeyPressed(Keyboard::Key::Escape)) break;
     
+        // every loop iteraton, we need to update the ball
+        ball.update();
+        
         // render the ball instance on the window
         window.draw(ball.shape);
         window.display();
