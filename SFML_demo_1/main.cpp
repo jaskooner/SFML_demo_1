@@ -6,12 +6,12 @@ using namespace sf;
 
 // constexpr defines an immutable compile time value
 constexpr int windowWidth(800), windowHeight(600);
-
-// constamts for the Ball class
 constexpr float ballRadius{10.f}, ballVelocity{8.f};
-
-// constants for the paddle
 constexpr float paddleWidth{60.f}, paddleHeight{20.f}, paddleVelocity{6.f};
+
+// define constants for the bricks
+constexpr float blockWidth{60.f}, blockHeight{20.f};
+constexpr int countBlocksX{11}, countBlocksY{4};
 
 struct Ball
 {
@@ -103,6 +103,31 @@ struct Paddle
     float bottom()      { return y() + shape.getSize().y / 2.f; }
 };
 
+
+struct Brick
+{
+    RectangleShape shape;
+    
+    // this boolean value will be used to check
+    // whether a brick has been hit or not
+    bool destroyed{false};
+    
+    Brick(float mX, float mY)
+    {
+        shape.setPosition(mX, mY);
+        shape.setSize({blockWidth, blockHeight});
+        shape.setFillColor(Color::Yellow);
+        shape.setOrigin(blockWidth / 2.f, blockHeight / 2.f);
+    }
+    
+    float x()           { return shape.getPosition().x; }
+    float y()           { return shape.getPosition().y; }
+    float left()        { return x() - shape.getSize().x / 2.f; }
+    float right()       { return x() + shape.getSize().x / 2.f; }
+    float top()         { return y() - shape.getSize().y / 2.f; }
+    float bottom()      { return y() + shape.getSize().y / 2.f; }
+};
+
 // Dealing with collisions: lets define a generic function
 // to check if two shapes are intersecting (colliding)
 template <class T1, class T2>
@@ -127,15 +152,23 @@ void testCollision(Paddle& mPaddle, Ball& mBall)
 }
 int main() {
     
-    // create an instance of Ball
-    // positioned at the center of the window
     Ball ball{windowWidth / 2, windowHeight / 2};
-    
-    // create a Paddle instance
     Paddle paddle{windowWidth / 2, windowHeight - 50};
     
+    // we will use a 'std::vector' to contain any number
+    // of Bricks instances
+    vector<Brick> bricks;
+    
+    // we will fill up our vector via a 2D for loop, creating
+    // bricks in a gride-like pattern
+    for (int iX{0}; iX < countBlocksX; ++iX)
+        for (int iY{0}; iY < countBlocksY; ++iY)
+            bricks.emplace_back((iX + 1) * (blockWidth + 3) + 32, (iY + 2) * (blockHeight + 3));
+    
+    
+    
     // creation of the game window
-    RenderWindow window{ {windowWidth, windowHeight}, "Arknoid - 1"};
+    RenderWindow window{ {windowWidth, windowHeight}, "Arknoid - 7"};
     window.setFramerateLimit(60);
     
     // game loop
@@ -159,6 +192,11 @@ int main() {
         window.draw(ball.shape);
         // render paddle
         window.draw(paddle.shape);
+        
+        // we must draw every brick on the window
+        // let usea modern c++11 foreach loop, that allows
+        // us to intuitively sat : 'draw every 'brick' in bricks
+        for(auto& brick : bricks) window.draw(brick.shape);
         window.display();
         
         // in some OS necesary to call
