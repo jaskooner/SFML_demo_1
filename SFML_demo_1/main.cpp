@@ -150,6 +150,17 @@ void testCollision(Paddle& mPaddle, Ball& mBall)
     if (mBall.x() < mPaddle.x()) mBall.velocity.x = -ballVelocity;
     else mBall.velocity.x = ballVelocity;
 }
+
+// ball brick collission
+void testCollision(Brick& mBrick, Ball& mBall)
+{
+    // if there is no intersection, get out of the function
+    if(!isIntersecting(mBrick, mBall)) return;
+    
+    // otherwide, the brik has been hit
+    
+}
+
 int main() {
     
     Ball ball{windowWidth / 2, windowHeight / 2};
